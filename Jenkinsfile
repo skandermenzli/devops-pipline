@@ -34,5 +34,26 @@ pipeline {
                 }
             }
         }
+        stage('Deploy WordPress') {
+            steps {
+                script {
+                    // Authenticate with Kubernetes cluster
+                    sh 'kubectl config set-cluster YOUR_CLUSTER_NAME'
+                    sh 'kubectl config set-credentials YOUR_CLUSTER_CREDS'
+                    sh 'kubectl config set-context YOUR_CLUSTER_CONTEXT'
+                    sh 'kubectl config use-context YOUR_CLUSTER_CONTEXT'
+                    
+                    // Apply Kubernetes manifests for WordPress deployment
+                    sh 'kubectl apply -f tp3/configmap.yaml'
+                    sh 'kubectl apply -f tp3/secret.yaml'
+                    sh 'kubectl apply -f tp3/mysql-pv.yaml'
+                    sh 'kubectl apply -f tp3/mysql-deployment.yaml'
+                    sh 'kubectl apply -f tp3/wp-pv.yaml'
+                    sh 'kubectl apply -f tp3/wp-deployment.yaml'
+                    
+                    // Other steps like waiting for deployment to complete, etc.
+                }
+            }
+        }
     }
 }
